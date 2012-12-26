@@ -7,30 +7,25 @@ class DB {
 	public $RowCount;
 	public $ColCount;
 	private $NoResult;
-	private function do_connect()
-	{
+	private function do_connect(){
 		//$this->Debug=1;
 		$this->conn=mysql_connect(HOST_Name,MySQL_User,MySQL_Pass);
-		if(!$this->conn)
-		{
+		if(!$this->conn){
 			die('Could not Connect: '.mysql_error()."<br><br>");
 		}
 		mysql_select_db(MySQL_DB) or die('Cannot select database (database.php): '.mysql_error()."<br><br>");
 		$this->NoResult=1;
 	}
-	public function SqlSafe($StrValue)
-	{
+	public function SqlSafe($StrValue){
 		$this->do_connect();
 		return mysql_real_escape_string($StrValue);
 	}
-	public function do_ins_query($querystr)
-	{
+	public function do_ins_query($querystr){
 		$this->do_connect();
 		$this->result = mysql_query($querystr,$this->conn);
-		if (!$this->result)
-		{
+		if (!$this->result){
 			$message = 'Error(database): ' . mysql_error();
-  			//$message .= 'Whole query: ' . $querystr."<br>";
+			//$message .= 'Whole query: ' . $querystr."<br>";
 			if($this->Debug)
 				echo $message;
 			$this->RowCount=0;
@@ -40,13 +35,10 @@ class DB {
 		$this->RowCount=mysql_affected_rows($this->conn);
 		return $this->RowCount;
 	}
-	
-	public function do_sel_query($querystr)
-	{
+	public function do_sel_query($querystr){
 		$this->do_connect();
 		$this->result = mysql_query($querystr,$this->conn);
-		if (mysql_errno($this->conn))
-		{
+		if (mysql_errno($this->conn)){
 			if($this->Debug)
 				echo mysql_error($this->conn);
 			$this->NoResult=1;
@@ -58,20 +50,15 @@ class DB {
 		$this->ColCount=mysql_num_fields($this->result);
 		return $this->RowCount;
 	}
-	
-	public function get_row()
-	{
+	public function get_row(){
 		if(!$this->NoResult)
 			return mysql_fetch_assoc($this->result);
 	}
-
-	public function get_n_row()
-	{
+	public function get_n_row(){
 		if (!$this->NoResult)
 			return mysql_fetch_row($this->result);
 	}
-	public function GetFieldName($ColPos)
-	{
+	public function GetFieldName($ColPos){
 		if(mysql_errno())
 			return "ERROR!";
 		else if($this->ColCount>$ColPos)
@@ -79,9 +66,7 @@ class DB {
 		else
 			return "Offset Error!";
 	}
-	
-	public function GetTableName($ColPos)
-	{
+	public function GetTableName($ColPos){
 		if(mysql_errno())
 			return "ERROR!";
 		else if($this->ColCount>$ColPos)
@@ -89,8 +74,7 @@ class DB {
 		else
 			return "Offset Error!";
 	}
-	public function do_max_query($Query)
-	{
+	public function do_max_query($Query){
 		$this->do_sel_query($Query);
 		$row= $this->get_n_row();
 		//echo "Whole Row: ".$row[0].$row[1];
@@ -99,24 +83,21 @@ class DB {
 		else
 			return $row[0];
 	}
-	public function do_close()
-	{
-		// Free resultset 
+	public function do_close(){
+		// Free resultset
 		if(!$this->NoResult)
-			mysql_free_result($this->result);		
+			mysql_free_result($this->result);
 		// Closing connection
 		if(isset($this->conn))
 			mysql_close($this->conn);
 		//echo "<br />LastQuery: ".$LastQuery;
 	}
-	public function __sleep()
-	{
-    	$this->do_close(); 
+	public function __sleep(){
+		$this->do_close();
 		return array('conn','result','Debug');
-  	}	
-  	public function __wakeup()
-	{
-    	$this->do_connect();
-  	}
-}  	
+	}
+	public function __wakeup(){
+		$this->do_connect();
+	}
+}
 ?>

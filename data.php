@@ -1,6 +1,6 @@
 <?php
 require_once('library.php');
-//$RespData['Auth']=CheckSession();
+$RespData['Auth']=CheckSession();
 $Data=new DB();
 $Data->Debug=1;
 $Query="Select * from `".MySQL_Pre."ACs`";
@@ -22,7 +22,7 @@ while ($line = $Data->get_row()){
 	}
 	$r++;
 }
-//$Data->do_close();
+$Data->do_close();
 unset($Data);
 echo json_encode($RespData);
 ?>
